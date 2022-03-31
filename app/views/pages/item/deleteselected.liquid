@@ -1,0 +1,19 @@
+---
+method: post
+---
+{%- assign item_id = context.params.slug3 -%}
+{%- assign list_id = context.params.showlist_id -%}
+{% assign arrayItems = item_id | split: "," %}
+
+{% for arrayItem in arrayItems %}
+	{% graphql result = 'item/delete', item_id: arrayItem %}
+	{% assign item = result | fetch: "model_delete" %}
+{% endfor %}
+
+{% if item.id %}
+<script>window.location.href = '/list/show/{{ list_id }}';</script>
+{% else %}
+Something went wrong :(
+<br>
+{{ result.errors }}
+{% endif %}

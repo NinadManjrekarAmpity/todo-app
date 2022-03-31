@@ -2,6 +2,8 @@
 {% graphql list = 'list/read', id: id | fetch: 'models' | fetch: 'results' | first %}
 {% graphql items = 'item/read', id: id | fetch: 'models' | fetch: 'results' %}
 
+{%- assign arrayItems1 = '' -%}
+
 {% unless list.deleted_at %}
 
 <div class="flex flex-wrap items-center" x-data="{ open: false }">
@@ -75,6 +77,10 @@
           <input type="hidden" name="list_id" value="{{ list.id }}">
         </form>
         </td>
+		
+		{% if item.completed == true %}
+			{% assign arrayItems = arrayItems | append: ',' | append: item.id %}
+		{% endif %}
 
         <td x-data="{ open: false }" class="flex items-center">
           <span x-show="open !== true">{{ item.content }}</span>
@@ -105,7 +111,18 @@
         </form>
       </td>
     </tr>
+	
     {% endfor %}
+	
+	<tr>
+		<td colspan="4">
+			<form action="/item/deleteselected/{{ arrayItems }}" method="POST">
+			  <input type="hidden" name="showlist_id" value="{{ list.id }}">
+			  <button>delete selected</button>
+			</form>
+		</td>
+	</tr>
+	
   </tbody>
 </table>
 
